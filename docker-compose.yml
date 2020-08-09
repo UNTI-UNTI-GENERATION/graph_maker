@@ -7,9 +7,9 @@ services:
         tty: true
         volumes:
             - ./src/:/src
-            - ./requirements.txt/:/src/requirements.txt
+            - ./requirements.txt/:/requirements.txt
         working_dir: /src
-        command: bash -c 'pip install -r requirements.txt && python app.py'
+        command: bash -c 'pip install -r /requirements.txt && python app.py'
         depends_on:
             - redis
     redis:
