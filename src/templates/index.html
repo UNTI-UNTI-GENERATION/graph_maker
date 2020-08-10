@@ -95,9 +95,7 @@
             for(let i=1;i <= form_models['disp_col_num'];i++){
                 renderDataForm(i)
                 setDataFormDOM();
-                if (form_models[i]['value']) {
-                    $(`#${i}-data_num`)[0].defaultValue = form_models[i]['value'];
-                }
+                $(`#${i}-data_num`)[0].defaultValue = form_models[i]['disp_data_num'];
             }
         }
 
@@ -112,10 +110,10 @@
             $(`#${selected_col_num}-data-body`)[0].innerHTML = html_source;
             for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
                 if (form_models[selected_col_num]['data'][i]['x-value']) {
-                    $("#x-${col_num}-${data_num}")[0].defaultValue =form_models[selected_col_num]['data'][i]['x-value'];
+                    $(`#x-${selected_col_num}-${i}`)[0].defaultValue =form_models[selected_col_num]['data'][i]['x-value'];
                 }
                 if (form_models[selected_col_num]['data'][i]['y-value']) {
-                    $("#y-${col_num}-${data_num}")[0].defaultValue =form_models[selected_col_num]['data'][i]['y-value'];
+                    $(`#y-${selected_col_num}-${i}`)[0].defaultValue =form_models[selected_col_num]['data'][i]['y-value'];
                 }
             }
         }
@@ -126,6 +124,14 @@
                     form_models[i]['disp_data_num'] = $(`#${i}-data_num`)[0].valueAsNumber;
                     renderDataForm(i);
                 })
+                for(let j=1;j<=form_models[i]['disp_data_num'];j++) {
+                    $(document).on("change", `#x-${i}-${j}`, function(){
+                        form_models[i]['data'][j]['x-value'] = $(`#x-${i}-${j}`)[0].value;
+                    })
+                    $(document).on("change", `#y-${i}-${j}`, function(){
+                        form_models[i]['data'][j]['y-value'] = $(`#y-${i}-${j}`)[0].value;
+                    })
+                }
             }
         }
 
