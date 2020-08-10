@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph maker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div id="graph_block"  class="col s12 m10 offset-m1 l6">
+                <img class="materialboxed" src="{{ graph_src }}" alt="graph">
+            </div>
+            <div id="form_block" class="col s12 m8 offset-m2 l6">
+                <form action="/graph_maker_API" method="POST"></form>
+                <div class="row">
+                    <div class="col s12 input-field">
+                        <label for="title">図名</label>
+                        <input type="text" placeholder="Title" id="title" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6 input-field">
+                        <label for="x-label">X軸</label>
+                        <input type="text" placeholder="X" id="x-label" class="validate">
+                    </div>
+                    <div class="col s12 m6 input-field">
+                        <label for="y-label">Y軸</label>
+                        <input type="text" placeholder="Y" id="y-label" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="col_num">系列数</label>
+                        <p class="range-field">
+                            <input type="range" id="col_num" min="1" max="5">
+                        </p>
+                    </div>
+                    <div class="col s12 m6">
+                        <ul class="collapsible" id="col_form">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript">
+        M.AutoInit();
+
+        $(document).ready(function(){
+        });
+
+        function generateDataFormHTML(data_num) {
+            html_source  = `<li>`;
+            html_source += `    <div class="collapsible-header">`;
+            html_source += `        <i class="material-icons">filter_drama</i>系列${data_num}`;
+            html_source += `    </div>`;
+            html_source += `    <div id="data-${data_num}" class="collapsible-body">`;
+            html_source += `    </div>`;
+            html_source += `</li>`;
+        }
+
+        function generateColumnFormHTML(col_num, data_num) {
+            html_source  = `<div class="row">`;
+            html_source += `    <div class="col s6">`;
+            html_source += `        <label for="x-${col_num}-${data_num}">X軸${data_num}</label>`;
+            html_source += `        <input type="number" placeholder="${data_num}" id="x-${col_num}-${data_num}" class="validate">`;
+            html_source += `    </div>`;
+            html_source += `    <div class="col s6">`;
+            html_source += `        <label for="y-${col_num}-${data_num}">Y軸${data_num}</label>`;
+            html_source += `        <input type="number" placeholder="${data_num}" id="y-${col_num}-${data_num}" class="validate">`;
+            html_source += `    </div>`;
+            html_source += `</div>`;
+
+            return html_source;
+        }
+
+    </script>
+</body>
+</html>

@@ -9,8 +9,8 @@ redis = Redis(host='redis', port=6379)
 
 @app.route('/')
 def index():
-    count = redis.incr('hits')
-    return 'Hello World! I have been seen {} times.\n'.format(count)
+    graph_src = 'https://i.gzn.jp/img/2019/06/17/poop-transplants-transmit-deadly-superbugs/00_m.jpg'
+    return render_template('index.html', graph_src=graph_src)
 
 @app.route('/graph_maker_API', methods=['POST'])
 def graph_maker_API():
