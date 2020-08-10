@@ -38,9 +38,8 @@
                             <input type="range" id="col_num" min="1" max="5">
                         </p>
                     </div>
-                    <div class="col s12 m6">
+                    <div class="col s12">
                         <ul class="collapsible" id="col_form">
-
                         </ul>
                     </div>
                 </div>
@@ -50,31 +49,129 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script type="text/javascript">
+
+        const col_num  = $('#col_num');
+        const col_form = $('#col_form');
+        const default_col_num  = 2;
+        const default_data_num = 6;
+        let form_models = {};
+
         M.AutoInit();
+        __init__();
 
         $(document).ready(function(){
+            col_num[0].defaultValue = default_col_num;
+            renderColumnForm();
         });
 
-        function generateDataFormHTML(data_num) {
-            html_source  = `<li>`;
-            html_source += `    <div class="collapsible-header">`;
-            html_source += `        <i class="material-icons">filter_drama</i>系列${data_num}`;
-            html_source += `    </div>`;
-            html_source += `    <div id="data-${data_num}" class="collapsible-body">`;
-            html_source += `    </div>`;
-            html_source += `</li>`;
+        col_num.change(function(){
+            form_models['disp_col_num'] = col_num[0].valueAsNumber;
+            renderColumnForm();
+        });
+
+        function __init__() {
+            for(let i=1;i<=5;i++){
+                form_models['disp_col_num'] = default_col_num;
+                form_models[i] = {};
+                form_models[i]['value'];
+                form_models[i]['data'] = {};
+                form_models[i]['code'] = generateColumnFormHTML(i);
+                form_models[i]['disp_data_num'] = default_data_num;
+                for(let j=1;j<=10;j++){
+                    form_models[i]['data'][j] = {};
+                    form_models[i]['data'][j]['code'] = generateDataFormHTML(i,j);
+                    form_models[i]['data'][j]['x-value'];
+                    form_models[i]['data'][j]['y-value'];
+                }
+            }
         }
 
-        function generateColumnFormHTML(col_num, data_num) {
+        function renderColumnForm() {
+            let html_source = '';
+            for(let i=1;i <= form_models['disp_col_num'];i++){
+                html_source += form_models[i]['code'];
+            }
+            col_form[0].innerHTML = html_source;
+            for(let i=1;i <= form_models['disp_col_num'];i++){
+                renderDataForm(i)
+                setDataFormDOM();
+                if (form_models[i]['value']) {
+                    $(`#${i}-data_num`)[0].defaultValue = form_models[i]['value'];
+                }
+            }
+        }
+
+        function renderDataForm(selected_col_num) {
+            let html_source = '';
+            if (!form_models[selected_col_num]['data']) {
+                form_models[selected_col_num]['data'] = {};
+            } 
+            for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
+                html_source += form_models[selected_col_num]['data'][i]['code'];
+            }
+            $(`#${selected_col_num}-data-body`)[0].innerHTML = html_source;
+            for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
+                if (form_models[selected_col_num]['data'][i]['x-value']) {
+                    $("#x-${col_num}-${data_num}")[0].defaultValue =form_models[selected_col_num]['data'][i]['x-value'];
+                }
+                if (form_models[selected_col_num]['data'][i]['y-value']) {
+                    $("#y-${col_num}-${data_num}")[0].defaultValue =form_models[selected_col_num]['data'][i]['y-value'];
+                }
+            }
+        }
+
+        function setDataFormDOM() {
+            for(let i=1;i<=form_models['disp_col_num'];i++){
+                $(document).on("change", `#${i}-data_num`, function(){
+                    form_models[i]['disp_data_num'] = $(`#${i}-data_num`)[0].valueAsNumber;
+                    renderDataForm(i);
+                })
+            }
+        }
+
+        function getModelLength() {
+            cnt = 0;
+            Object.keys(form_models).forEach(function(value) {
+                if (!isNaN(parseInt(value))) cnt++;
+            })
+            return cnt;
+        }
+
+
+        function generateColumnFormHTML(col_num) {
+            let html_source;
+            html_source  = `<li>`;
+            html_source += `<div class="collapsible-header">`;
+            html_source += `<i class="material-icons">filter_drama</i>系列${col_num}`;
+            html_source += `</div>`;
+            html_source += `<div class="collapsible-body">`;
+            html_source += `<div class="row">`;
+            html_source += `<div class="col s12">`;
+            html_source += `<label for="${col_num}-data_num">データ数</label>`;
+            html_source += `<p class="range-field">`;
+            html_source += `<input type="range" id="${col_num}-data_num" min="1" max="10">`
+            html_source += `</p>`;
+            html_source += `<div id="${col_num}-data-body"`;
+            html_source += `</div>`
+            html_source += `</div>`;
+            html_source += `</div>`;
+            html_source += `</div>`;
+            html_source += `</li>`;
+
+            return html_source;
+        }
+
+        function generateDataFormHTML(col_num, data_num) {
+            let html_source;
             html_source  = `<div class="row">`;
-            html_source += `    <div class="col s6">`;
-            html_source += `        <label for="x-${col_num}-${data_num}">X軸${data_num}</label>`;
-            html_source += `        <input type="number" placeholder="${data_num}" id="x-${col_num}-${data_num}" class="validate">`;
-            html_source += `    </div>`;
-            html_source += `    <div class="col s6">`;
-            html_source += `        <label for="y-${col_num}-${data_num}">Y軸${data_num}</label>`;
-            html_source += `        <input type="number" placeholder="${data_num}" id="y-${col_num}-${data_num}" class="validate">`;
-            html_source += `    </div>`;
+            html_source += `<div class="col s6">`;
+            html_source += `<label for="x-${col_num}-${data_num}">X軸${data_num}</label>`;
+            html_source += `<input type="number" placeholder="${data_num}" id="x-${col_num}-${data_num}" class="validate">`;
+            html_source += `</div>`;
+            html_source += `<div class="col s6">`;
+            html_source += `<label for="y-${col_num}-${data_num}">Y軸${data_num}</label>`;
+            html_source += `<input type="number" placeholder="${data_num}" id="y-${col_num}-${data_num}" class="validate">`;
+            html_source += `</div>`;
             html_source += `</div>`;
 
             return html_source;
