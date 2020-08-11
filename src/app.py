@@ -10,14 +10,7 @@ redis = Redis(host='redis', port=6379)
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST' and request.form['mode'] == 'download':
-        print ('TEST')
         csv = utility.get_csv_template()
-        print (csv)
-        return csv
-    elif request.args.get('mode') == 'download':
-        print ('TEST')
-        csv = utility.get_csv_template()
-        print (csv)
         return csv
     else:
         graph_histories = [
