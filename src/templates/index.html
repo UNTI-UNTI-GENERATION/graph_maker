@@ -54,6 +54,7 @@
         const col_form = $('#col_form');
         const default_col_num  = 2;
         const default_data_num = 6;
+        const mark_options = {1:'円',2:'三角形',3:'四角形',4:'逆三角形',5:'菱形'};
         let form_models = {};
 
         M.AutoInit();
@@ -62,21 +63,23 @@
         $(document).ready(function(){
             col_num[0].defaultValue = default_col_num;
             renderColumnForm();
+            $('select').formSelect();
         });
 
         col_num.change(function(){
             form_models['disp_col_num'] = col_num[0].valueAsNumber;
             renderColumnForm();
+            $('select').formSelect();
         });
 
         function __init__() {
             for(let i=1;i<=5;i++){
                 form_models['disp_col_num'] = default_col_num;
                 form_models[i] = {};
-                form_models[i]['value'];
-                form_models[i]['data'] = {};
+                form_models[i]['mark'] = i;
                 form_models[i]['code'] = generateColumnFormHTML(i);
                 form_models[i]['disp_data_num'] = default_data_num;
+                form_models[i]['data'] = {};
                 for(let j=1;j<=10;j++){
                     form_models[i]['data'][j] = {};
                     form_models[i]['data'][j]['code'] = generateDataFormHTML(i,j);
@@ -101,9 +104,6 @@
 
         function renderDataForm(selected_col_num) {
             let html_source = '';
-            if (!form_models[selected_col_num]['data']) {
-                form_models[selected_col_num]['data'] = {};
-            } 
             for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
                 html_source += form_models[selected_col_num]['data'][i]['code'];
             }
@@ -122,6 +122,10 @@
             for(let i=1;i<=form_models['disp_col_num'];i++){
                 $(document).on("change", `#${i}-data_num`, function(){
                     form_models[i]['disp_data_num'] = $(`#${i}-data_num`)[0].valueAsNumber;
+                    renderDataForm(i);
+                })
+                $(document).on("change", `#${i}-mark`, function(){
+                    form_models[i]['mark'] = parseInt($(`#${i}-mark`)[0].value);
                     renderDataForm(i);
                 })
                 for(let j=1;j<=form_models[i]['disp_data_num'];j++) {
@@ -146,11 +150,23 @@
 
         function generateColumnFormHTML(col_num) {
             let html_source;
+            let img_src = 'https://storage.nana-music.com/picture/7334003-6a5f28db-fcd3-4bee-8561-ddb988b9529e-large.png';
             html_source  = `<li>`;
             html_source += `<div class="collapsible-header">`;
-            html_source += `<i class="material-icons">filter_drama</i>系列${col_num}`;
+            html_source += `<i class="material-icons">filter_${col_num}</i>系列${col_num}`;
             html_source += `</div>`;
             html_source += `<div class="collapsible-body">`;
+            html_source += `<div class="row">`;
+            html_source += `<div class="input-field col s12">`;
+            html_source += `<select id="${col_num}-mark" data-icon=${img_src}>`;
+            for(let key in mark_options) {
+            let selected = (form_models[col_num]['mark'] == key) ? 'selected':'';
+            html_source += `<option value="${key}" ${selected}>${mark_options[key]}</option>`;
+            }
+            html_source += `</select>`;
+            html_source += `<label>凡例</label>`;
+            html_source += `</div>`;
+            html_source += `</div>`;
             html_source += `<div class="row">`;
             html_source += `<div class="col s12">`;
             html_source += `<label for="${col_num}-data_num">データ数</label>`;
