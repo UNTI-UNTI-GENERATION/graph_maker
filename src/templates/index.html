@@ -31,6 +31,16 @@
     $(document).ready(function(){
         $('.tabs').tabs();
     });
+    
+    function alertContents() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                alert(httpRequest.responseText);
+            } else {
+                alert('Error: failed to send HTTP request');
+            }
+        }
+    }
 </script>
 </body>
 </html>

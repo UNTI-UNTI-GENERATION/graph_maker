@@ -2,22 +2,33 @@ from flask import Flask, render_template, request
 from redis import Redis
 from matplotlib import pyplot as plt
 
-import lib
+from lib import utility
 
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def index():
-    graph_histories = [
-        {
-            'src':'test src',
-            'name':'test name',
-            'date':'YYYY-MM-DD H:i:s'
-        }
-    ]
-    graph_src = 'https://i.gzn.jp/img/2019/06/17/poop-transplants-transmit-deadly-superbugs/00_m.jpg'
-    return render_template('index.html', graph_src=graph_src, graph_histories=graph_histories)
+    if request.method == 'POST' and request.form['mode'] == 'download':
+        print ('TEST')
+        csv = utility.get_csv_template()
+        print (csv)
+        return csv
+    elif request.args.get('mode') == 'download':
+        print ('TEST')
+        csv = utility.get_csv_template()
+        print (csv)
+        return csv
+    else:
+        graph_histories = [
+            {
+                'src':'test src',
+                'name':'test name',
+                'date':'YYYY-MM-DD H:i:s'
+            }
+        ]
+        graph_src = 'https://i.gzn.jp/img/2019/06/17/poop-transplants-transmit-deadly-superbugs/00_m.jpg'
+        return render_template('index.html', graph_src=graph_src, graph_histories=graph_histories)
 
 @app.route('/graph_maker_API', methods=['POST'])
 def graph_maker_API():
