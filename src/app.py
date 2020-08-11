@@ -19,6 +19,11 @@ def graph_maker_API():
     
     errors = list()
 
+@app.route('/latex_maker', methods=['POST'])
+def latex_maker():
+    if request.method != 'POST':
+        return '不正なリクエストです.'
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
