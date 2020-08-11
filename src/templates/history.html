@@ -1,5 +1,21 @@
 <div id="history">
     <div class="container">
-    history
+        <div class="row">
+            {% for graph_histry in graph_histries %}
+                <div class="col s12 m6 l4">
+                    <div class="card">
+                        <div class="card-image">
+                            <img src="{{ graph_history.src }}">
+                            <span class="card-title">{{ graph_histry.title }}</span>
+                        </div>
+                        <div class="card-content">
+                            {{ graph_histry.date }}
+                        <div class="card-action">
+                            <a href="/">Download</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>

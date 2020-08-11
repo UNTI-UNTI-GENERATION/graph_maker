@@ -10,16 +10,19 @@
                     <div class="col s12 input-field">
                         <label for="title">図名</label>
                         <input type="text" placeholder="Title" id="title" class="validate">
+                        <span class="helper-text" data-error="wrong" data-success="right"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col s12 m6 input-field">
                         <label for="x-label">X軸</label>
                         <input type="text" placeholder="X" id="x-label" class="validate">
+                        <span class="helper-text" data-error="wrong" data-success="right"></span>
                     </div>
                     <div class="col s12 m6 input-field">
                         <label for="y-label">Y軸</label>
                         <input type="text" placeholder="Y" id="y-label" class="validate">
+                        <span class="helper-text" data-error="wrong" data-success="right"></span>
                     </div>
                 </div>
                 <div class="row">
@@ -56,12 +59,13 @@
             col_num[0].defaultValue = default_col_num;
             renderColumnForm();
             $('select').formSelect();
+            M.updateTextFields();
         });
 
         col_num.change(function(){
             form_models['disp_col_num'] = col_num[0].valueAsNumber;
-                renderColumnForm();
-        $('select').formSelect();
+            renderColumnForm();
+            $('select').formSelect();
         });
 
         function __init__() {
@@ -131,15 +135,6 @@
             }
         }
 
-        function getModelLength() {
-            cnt = 0;
-            Object.keys(form_models).forEach(function(value) {
-                if (!isNaN(parseInt(value))) cnt++;
-            })
-            return cnt;
-        }
-
-
         function generateColumnFormHTML(col_num) {
             let html_source;
             let img_src = 'https://storage.nana-music.com/picture/7334003-6a5f28db-fcd3-4bee-8561-ddb988b9529e-large.png';
@@ -178,13 +173,15 @@
         function generateDataFormHTML(col_num, data_num) {
             let html_source;
             html_source  = `<div class="row">`;
-            html_source += `<div class="col s6">`;
+            html_source += `<div class="col s6 input-field">`;
             html_source += `<label for="x-${col_num}-${data_num}">X軸${data_num}</label>`;
             html_source += `<input type="number" placeholder="${data_num}" id="x-${col_num}-${data_num}" class="validate">`;
+            html_source += `<span class="helper-text" data-error="wrong" data-success="right"></span>`;
             html_source += `</div>`;
-            html_source += `<div class="col s6">`;
+            html_source += `<div class="col s6 input-field">`;
             html_source += `<label for="y-${col_num}-${data_num}">Y軸${data_num}</label>`;
             html_source += `<input type="number" placeholder="${data_num}" id="y-${col_num}-${data_num}" class="validate">`;
+            html_source += `<span class="helper-text" data-error="wrong" data-success="right"></span>`;
             html_source += `</div>`;
             html_source += `</div>`;
 

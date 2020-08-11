@@ -16,7 +16,7 @@ def index():
         graph_histories = [
             {
                 'src':'test src',
-                'name':'test name',
+                'title':'test name',
                 'date':'YYYY-MM-DD H:i:s'
             }
         ]
