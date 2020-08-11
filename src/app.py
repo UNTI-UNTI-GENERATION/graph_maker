@@ -9,8 +9,15 @@ redis = Redis(host='redis', port=6379)
 
 @app.route('/')
 def index():
+    graph_histories = [
+        {
+            'src':'test src',
+            'name':'test name',
+            'date':'YYYY-MM-DD H:i:s'
+        }
+    ]
     graph_src = 'https://i.gzn.jp/img/2019/06/17/poop-transplants-transmit-deadly-superbugs/00_m.jpg'
-    return render_template('index.html', graph_src=graph_src)
+    return render_template('index.html', graph_src=graph_src, graph_histories=graph_histories)
 
 @app.route('/graph_maker_API', methods=['POST'])
 def graph_maker_API():

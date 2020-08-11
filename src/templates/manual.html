@@ -1,0 +1,195 @@
+<div id="manual">
+    <div class="container">
+        <div class="row">
+            <div id="graph_block"  class="col s12 m10 offset-m1 l6">
+                <img class="materialboxed" src="{{ graph_src }}" alt="graph">
+            </div>
+            <div id="form_block" class="col s12 m8 offset-m2 l6">
+                <form action="/graph_maker_API" method="POST"></form>
+                <div class="row">
+                    <div class="col s12 input-field">
+                        <label for="title">図名</label>
+                        <input type="text" placeholder="Title" id="title" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6 input-field">
+                        <label for="x-label">X軸</label>
+                        <input type="text" placeholder="X" id="x-label" class="validate">
+                    </div>
+                    <div class="col s12 m6 input-field">
+                        <label for="y-label">Y軸</label>
+                        <input type="text" placeholder="Y" id="y-label" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label for="col_num">系列数</label>
+                        <p class="range-field">
+                            <input type="range" id="col_num" min="1" max="5">
+                        </p>
+                    </div>
+                    <div class="col s12">
+                        <ul class="collapsible" id="col_form">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript">
+
+        const col_num  = $('#col_num');
+        const col_form = $('#col_form');
+        const default_col_num  = 2;
+        const default_data_num = 6;
+        const mark_options = {1:'円',2:'三角形',3:'四角形',4:'逆三角形',5:'菱形'};
+        const column_colors = {1:'blue',2:'light-blue',3:'cyan',4:'teal',5:'green'};
+        let form_models = {};
+
+        M.AutoInit();
+        __init__();
+
+        $(document).ready(function(){
+            col_num[0].defaultValue = default_col_num;
+            renderColumnForm();
+            $('select').formSelect();
+        });
+
+        col_num.change(function(){
+            form_models['disp_col_num'] = col_num[0].valueAsNumber;
+                renderColumnForm();
+        $('select').formSelect();
+        });
+
+        function __init__() {
+            for(let i=1;i<=5;i++){
+                form_models['disp_col_num'] = default_col_num;
+                form_models[i] = {};
+                form_models[i]['mark'] = i;
+                form_models[i]['code'] = generateColumnFormHTML(i);
+                form_models[i]['disp_data_num'] = default_data_num;
+                form_models[i]['data'] = {};
+                for(let j=1;j<=10;j++){
+                    form_models[i]['data'][j] = {};
+                    form_models[i]['data'][j]['code'] = generateDataFormHTML(i,j);
+                    form_models[i]['data'][j]['x-value'];
+                    form_models[i]['data'][j]['y-value'];
+                }
+            }
+        }
+
+        function renderColumnForm() {
+            let html_source = '';
+            for(let i=1;i <= form_models['disp_col_num'];i++){
+                html_source += form_models[i]['code'];
+            }
+            col_form[0].innerHTML = html_source;
+            for(let i=1;i <= form_models['disp_col_num'];i++){
+                renderDataForm(i)
+                setDataFormDOM();
+                $(`#${i}-data_num`)[0].defaultValue = form_models[i]['disp_data_num'];
+            }
+        }
+
+        function renderDataForm(selected_col_num) {
+            let html_source = '';
+            for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
+                html_source += form_models[selected_col_num]['data'][i]['code'];
+            }
+            $(`#${selected_col_num}-data-body`)[0].innerHTML = html_source;
+            for(let i=1;i <= form_models[selected_col_num]['disp_data_num'];i++){
+                if (form_models[selected_col_num]['data'][i]['x-value']) {
+                    $(`#x-${selected_col_num}-${i}`)[0].defaultValue =form_models[selected_col_num]['data'][i]['x-value'];
+                }
+                if (form_models[selected_col_num]['data'][i]['y-value']) {
+                    $(`#y-${selected_col_num}-${i}`)[0].defaultValue =form_models[selected_col_num]['data'][i]['y-value'];
+                }
+            }
+        }
+
+        function setDataFormDOM() {
+                for(let i=1;i<=form_models['disp_col_num'];i++){
+            $(document).on("change", `#${i}-data_num`, function(){
+                    form_models[i]['disp_data_num'] = $(`#${i}-data_num`)[0].valueAsNumber;
+                    renderDataForm(i);
+                })
+                $(document).on("change", `#${i}-mark`, function(){
+                    form_models[i]['mark'] = parseInt($(`#${i}-mark`)[0].value);
+                    renderDataForm(i);
+                })
+                for(let j=1;j<=form_models[i]['disp_data_num'];j++) {
+                    $(document).on("change", `#x-${i}-${j}`, function(){
+                        form_models[i]['data'][j]['x-value'] = $(`#x-${i}-${j}`)[0].value;
+                    })
+                    $(document).on("change", `#y-${i}-${j}`, function(){
+                        form_models[i]['data'][j]['y-value'] = $(`#y-${i}-${j}`)[0].value;
+                    })
+                }
+            }
+        }
+
+        function getModelLength() {
+            cnt = 0;
+            Object.keys(form_models).forEach(function(value) {
+                if (!isNaN(parseInt(value))) cnt++;
+            })
+            return cnt;
+        }
+
+
+        function generateColumnFormHTML(col_num) {
+            let html_source;
+            let img_src = 'https://storage.nana-music.com/picture/7334003-6a5f28db-fcd3-4bee-8561-ddb988b9529e-large.png';
+            html_source  = `<li>`;
+            html_source += `<div class="collapsible-header ${column_colors[col_num]} accent-2">`;
+            html_source += `<i class="material-icons">filter_${col_num}</i>系列${col_num}`;
+            html_source += `</div>`;
+            html_source += `<div class="collapsible-body ${column_colors[col_num]} lighten-4">`;
+            html_source += `<div class="row">`;
+            html_source += `<div class="input-field col s12">`;
+            html_source += `<select id="${col_num}-mark" data-icon=${img_src}>`;
+            for(let key in mark_options) {
+            let selected = (form_models[col_num]['mark'] == key) ? 'selected':'';
+            html_source += `<option value="${key}" ${selected}>${mark_options[key]}</option>`;
+            }
+            html_source += `</select>`;
+            html_source += `<label>凡例</label>`;
+            html_source += `</div>`;
+            html_source += `</div>`;
+            html_source += `<div class="row">`;
+            html_source += `<div class="col s12">`;
+            html_source += `<label for="${col_num}-data_num">データ数</label>`;
+            html_source += `<p class="range-field">`;
+            html_source += `<input type="range" id="${col_num}-data_num" min="1" max="10">`
+            html_source += `</p>`;
+            html_source += `<div id="${col_num}-data-body"`;
+            html_source += `</div>`
+            html_source += `</div>`;
+            html_source += `</div>`;
+            html_source += `</div>`;
+            html_source += `</li>`;
+
+            return html_source;
+        }
+
+        function generateDataFormHTML(col_num, data_num) {
+            let html_source;
+            html_source  = `<div class="row">`;
+            html_source += `<div class="col s6">`;
+            html_source += `<label for="x-${col_num}-${data_num}">X軸${data_num}</label>`;
+            html_source += `<input type="number" placeholder="${data_num}" id="x-${col_num}-${data_num}" class="validate">`;
+            html_source += `</div>`;
+            html_source += `<div class="col s6">`;
+            html_source += `<label for="y-${col_num}-${data_num}">Y軸${data_num}</label>`;
+            html_source += `<input type="number" placeholder="${data_num}" id="y-${col_num}-${data_num}" class="validate">`;
+            html_source += `</div>`;
+            html_source += `</div>`;
+
+            return html_source;
+        }
+
+    </script>
+</div>
