@@ -34,9 +34,7 @@
     
     function alertContents() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                alert(httpRequest.responseText);
-            } else {
+            if (httpRequest.status !== 200) {
                 alert('Error: failed to send HTTP request');
             }
         }

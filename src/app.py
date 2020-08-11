@@ -9,7 +9,7 @@ redis = Redis(host='redis', port=6379)
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    if request.method == 'POST' and request.form['mode'] == 'download':
+    if request.method == 'GET' and request.args.get('mode') == 'download':
         csv = utility.get_csv_template()
         return csv
     else:

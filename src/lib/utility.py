@@ -17,7 +17,7 @@ def get_csv_template():
     res = make_response()
     res.data = f.getvalue()
     res.headers['Content-Type'] = 'text/csv'
-    res.headers['Content-Disposition'] = 'attachment; filename=demo.csv'
+    res.headers['Content-Disposition'] = 'attachment;filename=demo.csv'
     return res
 
 # check系関数群
